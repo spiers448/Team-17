@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartHome
+namespace QuizSystem
 {
     public class Quiz
     {
@@ -14,7 +14,7 @@ namespace SmartHome
         private string quizDescription;
         private DateTime quizDate;
         private List<int> quizQuestions;
-        //private catagory quizCatagory;
+        private Category quizCatagory;
 
         //public fields
         public int QuizID
@@ -42,22 +42,23 @@ namespace SmartHome
             get { return quizQuestions; }
             set { quizQuestions = value; }
         }
-        /*
-        public catagory QuizCatagory
+        
+        public Category QuizCatagory
         {
             get { return quizCatagory; }
             set { quizCatagory = value; }
         }
-        */
+        
 
         //constructor
-        public Quiz(int quizID, string quizTitle, string quizDescription, DateTime quizDate, List<int> quizQuestions)
+        public Quiz(int quizID, string quizTitle, string quizDescription, DateTime quizDate, List<int> quizQuestions, Category QuizCatagory)
         {
             this.quizID = quizID;
             this.quizTitle = quizTitle;
             this.quizDescription = quizDescription;
             this.quizDate = quizDate;
             this.quizQuestions = quizQuestions;
+            this.quizCatagory = quizCatagory;
         }
 
     }
