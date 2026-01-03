@@ -66,7 +66,7 @@ namespace QuizSystem
         }
 
         //Paramaterised Constructor
-        public User(int userId, string username, string password, string contactInfo, bool IsLoggedIn)
+        public User(int userId, string username, string password, UserRole role, string contactInfo, bool IsLoggedIn)
         {
             UserId = userId;
             UserName = username;

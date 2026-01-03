@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QuizSystem
 {
-    internal class Admin : User
+    public class Admin : User
     {
         //private fields
         private DateTime loginDate;
@@ -26,8 +26,9 @@ namespace QuizSystem
         }
 
         //constructor
-        public Admin(int userID, string userName, string password, string email, string role, string status, DateTime loginDate) : base(userID, userName, password, email, role)
+        public Admin(int userID, string userName, string password, string email, UserRole role, string status, DateTime loginDate, bool isLoggedIn) : base(userID, userName, password, role, email, isLoggedIn)
         {
+            this.IsLoggedIn = isLoggedIn;
             this.loginDate = loginDate;
             this.status = status;
         }

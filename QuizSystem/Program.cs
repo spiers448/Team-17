@@ -12,11 +12,14 @@ public class Program
         LoginSequence(users);
     }
 
+    //login method
     public static void LoginSequence(List<User> allUsers)
     {
+        //prompt user for their username
         Console.WriteLine("Enter username:");
         string nameInput = Console.ReadLine();
 
+        //prompt user for password
         Console.WriteLine("Enter password:");
         string passwordInput = Console.ReadLine();
 
@@ -26,6 +29,7 @@ public class Program
         //if user doesnt exist
         if (foundUser == null)
         {
+            //inform user
             Console.WriteLine("Username or password incorrect");
             return;
         }
@@ -35,8 +39,11 @@ public class Program
 
         if (isSuccessful)
         {
+
+            //inform user that login was successful
             Console.WriteLine("Login successful");
 
+            //determine if user is a normal user or an admin user
             switch (foundUser.Role)
             {
                 case UserRole.Admin:
@@ -51,17 +58,19 @@ public class Program
         }
     }
 
+    //admin user menu method
     public static void ShowAdminMenu()
     {
         Console.WriteLine("admin");
     }
 
+    //normal user menu method
     public static void ShowUserMenu()
     {
         Console.WriteLine("user");
     }
 
-
+    //obtain data from csv file method
     public static List<User> LoadUsers()
     {
         string filename = "users.csv";

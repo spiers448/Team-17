@@ -19,7 +19,7 @@ namespace QuizSystem
         }
 
         //constructor
-        public Student(int userID, string userName, string password, string email, string role, string status) : base(userID, userName, password, email, role)
+        public Student(int userID, string userName, string password, string email, UserRole role, bool isLoggedIn, string status) : base(userID, userName, password, role, email, isLoggedIn)
         {
             this.status = status;
         }
