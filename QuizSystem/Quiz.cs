@@ -13,54 +13,59 @@ namespace QuizSystem
         private string quizTitle;
         private string quizDescription;
         private DateTime quizDate;
-        private List<int> quizQuestions;
-        private Category quizCatagory;
-
+        private List<Question> quizQuestions;
+        private Category quizCategory;
+        
         //public fields
         public int QuizID
         {
             get { return quizID; }
-            set { quizID = value; }
         }
+        
         public string QuizTitle
         {
             get { return quizTitle; }
             set { quizTitle = value; }
         }
+        
         public string QuizDescription
         {
             get { return quizDescription; }
             set { quizDescription = value; }
         }
+        
         public DateTime QuizDate
         {
             get { return quizDate; }
             set { quizDate = value; }
         }
-        public List<int> QuizQuestions
+        
+        public List<Question> QuizQuestions
         {
             get { return quizQuestions; }
             set { quizQuestions = value; }
         }
         
-        public Category QuizCatagory
+        public Category QuizCategory
         {
-            get { return quizCatagory; }
-            set { quizCatagory = value; }
+            get { return quizCategory; }
+            set { quizCategory = value; }
         }
         
-
+        //default constructor
+        public Quiz()
+        {
+        }
+        
         //constructor
-        public Quiz(int quizID, string quizTitle, string quizDescription, DateTime quizDate, List<int> quizQuestions, Category QuizCatagory)
+        public Quiz(int quizID, string quizTitle, string quizDescription, DateTime quizDate, List<Question> quizQuestions, Category quizCategory)
         {
             this.quizID = quizID;
             this.quizTitle = quizTitle;
             this.quizDescription = quizDescription;
             this.quizDate = quizDate;
             this.quizQuestions = quizQuestions;
-            this.quizCatagory = quizCatagory;
+            this.quizCategory = quizCategory;
         }
-
     }
 }
-
