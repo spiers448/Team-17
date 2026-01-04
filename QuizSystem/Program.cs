@@ -59,16 +59,20 @@ public class Program
 
         }
     }
-
+    
     //admin user menu method
     public static void ShowAdminMenu()
     {
-        Console.WriteLine("admin");
+        //clear console between menus
+        Console.Clear();            //personally, i think the ui is much easier to navigate 
+        Console.WriteLine("admin"); //if we clear the term between menus, but we dont have to do this if you all disagree
     }
 
     //normal user menu method
     public static void ShowUserMenu()
     {
+        //clear console between menus
+        Console.Clear();
         Console.WriteLine("user");
     }
 
@@ -131,7 +135,7 @@ public class Program
             File.WriteAllLines("users.csv", data.Select(line => string.Join(",", line)));
 
             //inform user
-            Console.WriteLine($"Dummy login credentials added to csv");
+            Console.WriteLine($"Dummy login credentials added to csv\n");
         }
 
         catch (Exception ex)
