@@ -1,8 +1,11 @@
 ﻿using QuizSystem;
+using System;
+using System.Formats.Asn1;
+using System.Globalization;
+using System.Text;
 
 public class Program
 {
-
 
     // Starting point for the application
     public static void Main()
@@ -54,7 +57,6 @@ public class Program
                     break;
             }
 
-
         }
     }
 
@@ -79,7 +81,7 @@ public class Program
         if (!File.Exists(filename))
         {
             Console.WriteLine("File not found");
-            return new List<User>();
+            fileCreate(@"users.csv");
         }
 
         //LINQ query
@@ -106,6 +108,38 @@ public class Program
         return _users;
     }
 
+    //create file and folder if not found
+    public static void fileCreate(string path)
+    {
+        try
+        {
+            // Create the file, or overwrite if the file exists.
+            using (FileStream fs = File.Create(path));
+            Console.WriteLine($"New file created at {path}");
 
+            //create list of data to be added to csv
+            var data = new List<string[]>
+            {
+                //for top row
+                new[] { "UserID", "Username", "Password", "Access", "ContactInfo" },
+                
+                //admin login
+                new[] { "1", "admin", "password1", "Admin", "example123@gmail.com" }
+            };
+            
+            //write list to csv
+            File.WriteAllLines("users.csv", data.Select(line => string.Join(",", line)));
 
+            //inform user
+            Console.WriteLine($"Dummy login credentials added to csv");
+        }
+
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR CREATING FILE/FOLDER: {ex.ToString()}");
+        }
+    }
 }
+
+
+
