@@ -61,20 +61,351 @@ public class Program
     }
     
     //admin user menu method
-    public static void ShowAdminMenu()
+  //admin user menu method
+public static void ShowAdminMenu()
+{
+    DataLoader data = new DataLoader();
+    
+    while(true)
     {
-        //clear console between menus
-        Console.Clear();            //personally, i think the ui is much easier to navigate 
-        Console.WriteLine("admin"); //if we clear the term between menus, but we dont have to do this if you all disagree
+        Console.Clear();
+        Console.WriteLine("=== Admin Menu ===");
+        Console.WriteLine("1. Add Question");
+        Console.WriteLine("2. Remove Question");
+        Console.WriteLine("3. Update Question");
+        Console.WriteLine("4. View All Questions");
+        Console.WriteLine("5. Add Category");
+        Console.WriteLine("6. Remove Category");
+        Console.WriteLine("7. Save Questions to CSV");
+        Console.WriteLine("8. Exit");
+        Console.Write("Select option: ");
+        
+        string choice = Console.ReadLine();
+        
+        switch(choice)
+        {
+            case "1":
+                AddQuestion(data);
+                break;
+            case "2":
+                RemoveQuestion(data);
+                break;
+            case "3":
+                UpdateQuestion(data);
+                break;
+            case "4":
+                ViewAllQuestions(data);
+                break;
+            case "5":
+                AddCategory(data);
+                break;
+            case "6":
+                RemoveCategory(data);
+                break;
+            case "7":
+                SaveQuestionsToCSV(data);
+                break;
+            case "8":
+                return;
+        }
     }
+}
+
+public static void AddQuestion(DataLoader data)
+{
+    Console.Clear();
+    Console.WriteLine("=== Add New Question ===");
+    
+    Console.Write("Question ID: ");
+    int id = int.Parse(Console.ReadLine());
+    
+    Console.Write("Question text: ");
+    string text = Console.ReadLine();
+    
+    List<string> options = new List<string>();
+    for(int i=1; i<=4; i++)
+    {
+        Console.Write($"Option {i}: ");
+        options.Add(Console.ReadLine());
+    }
+    
+    Console.Write("Correct answer: ");
+    string correctAnswer = Console.ReadLine();
+    
+    Console.Write("Difficulty (Easy/Medium/Hard): ");
+    string difficulty = Console.ReadLine();
+    
+    Question newQ = new Question(id, text, options, correctAnswer, difficulty);
+    data.questions.Add(newQ);
+    
+    Console.WriteLine("\nQuestion added successfully!");
+    Console.ReadKey();
+}
+
+public static void RemoveQuestion(DataLoader data)
+{
+    Console.Clear();
+    Console.WriteLine("=== Remove Question ===");
+    
+    ViewAllQuestions(data);
+    
+    Console.Write("\nEnter Question ID to remove: ");
+    int id = int.Parse(Console.ReadLine());
+    
+    Question toRemove = data.questions.FirstOrDefault(q => q.QuestionID == id);
+    
+    if(toRemove != null)
+    {
+        data.questions.Remove(toRemove);
+        Console.WriteLine("Question removed!");
+    }
+    else
+    {
+        Console.WriteLine("Question not found");
+    }
+    
+    Console.ReadKey();
+}
+
+public static void UpdateQuestion(DataLoader data)
+{
+    Console.Clear();
+    Console.WriteLine("=== Update Question ===");
+    
+    ViewAllQuestions(data);
+    
+    Console.Write("\nEnter Question ID to update: ");
+    int id = int.Parse(Console.ReadLine());
+    
+    Question toUpdate = data.questions.FirstOrDefault(q => q.QuestionID == id);
+    
+    if(toUpdate == null)
+    {
+        Console.WriteLine("Question not found");
+        Console.ReadKey();
+        return;
+    }
+    
+    Console.Write("New question text (leave blank to keep current): ");
+    string newText = Console.ReadLine();
+    if(!string.IsNullOrEmpty(newText))
+        toUpdate.QuestionText = newText;
+    
+    Console.Write("Update correct answer? (y/n): ");
+    if(Console.ReadLine().ToLower() == "y")
+    {
+        Console.Write("New correct answer: ");
+        toUpdate.QuestionCorrectAnswer = Console.ReadLine();
+    }
+    
+    Console.Write("Update difficulty? (y/n): ");
+    if(Console.ReadLine().ToLower() == "y")
+    {
+        Console.Write("New difficulty: ");
+        toUpdate.QuestionDifficultyLevel = Console.ReadLine();
+    }
+    
+    Console.WriteLine("\nQuestion updated!");
+    Console.ReadKey();
+}
+
+public static void ViewAllQuestions(DataLoader data)
+{
+    Console.WriteLine("\n=== All Questions ===");
+    foreach(Question q in data.questions)
+    {
+        Console.WriteLine($"ID: {q.QuestionID} | {q.QuestionText} | Difficulty: {q.QuestionDifficultyLevel}");
+    }
+    Console.WriteLine();
+}
+
+public static void AddCategory(DataLoader data)
+{
+    Console.Clear();
+    Console.WriteLine("=== Add Category ===");
+    
+    Console.Write("Category ID: ");
+    int id = int.Parse(Console.ReadLine());
+    
+    Console.Write("Category name: ");
+    string name = Console.ReadLine();
+    
+    Console.Write("Category description: ");
+    string desc = Console.ReadLine();
+    
+    Category newCat = new Category(id, name, desc);
+    data.categories.Add(newCat);
+    
+    Console.WriteLine("\nCategory added!");
+    Console.ReadKey();
+}
+
+public static void RemoveCategory(DataLoader data)
+{
+    Console.Clear();
+    Console.WriteLine("=== Remove Category ===");
+    
+    foreach(Category c in data.categories)
+    {
+        Console.WriteLine($"{c.CategoryID}. {c.CategoryName}");
+    }
+    
+    Console.Write("\nEnter Category ID to remove: ");
+    int id = int.Parse(Console.ReadLine());
+    
+    Category toRemove = data.categories.FirstOrDefault(c => c.CategoryID == id);
+    
+    if(toRemove != null)
+    {
+        data.categories.Remove(toRemove);
+        Console.WriteLine("Category removed!");
+    }
+    else
+    {
+        Console.WriteLine("Category not found");
+    }
+    
+    Console.ReadKey();
+}
+
+public static void SaveQuestionsToCSV(DataLoader data)
+{
+    try
+    {
+        List<string> lines = new List<string>();
+        lines.Add("QuestionID,QuestionText,Option1,Option2,Option3,Option4,CorrectAnswer,Difficulty");
+        
+        foreach(Question q in data.questions)
+        {
+            string line = $"{q.QuestionID},\"{q.QuestionText}\",";
+            foreach(string opt in q.QuestionOptions)
+            {
+                line += $"\"{opt}\",";
+            }
+            line += $"\"{q.QuestionCorrectAnswer}\",{q.QuestionDifficultyLevel}";
+            lines.Add(line);
+        }
+        
+        File.WriteAllLines("questions.csv", lines);
+        Console.WriteLine("Questions saved to questions.csv successfully!");
+    }
+    catch(Exception ex)
+    {
+        Console.WriteLine($"Error saving: {ex.Message}");
+    }
+    
+    Console.ReadKey();
+}
 
     //normal user menu method
-    public static void ShowUserMenu()
+    //normal user menu method
+public static void ShowUserMenu()
+{
+    DataLoader data = new DataLoader();
+    
+    while(true)
     {
-        //clear console between menus
         Console.Clear();
-        Console.WriteLine("user");
+        Console.WriteLine("=== Student Menu ===");
+        Console.WriteLine("1. Take a Quiz");
+        Console.WriteLine("2. Exit");
+        Console.Write("Select option: ");
+        
+        string choice = Console.ReadLine();
+        
+        if(choice == "1")
+        {
+            TakeQuiz(data);
+        }
+        else if(choice == "2")
+        {
+            break;
+        }
     }
+}
+
+public static void TakeQuiz(DataLoader data)
+{
+    Console.Clear();
+    Console.WriteLine("Available Quizzes:");
+    
+    for(int i=0; i<data.quizzes.Count; i++)
+    {
+        Quiz q = data.quizzes[i];
+        Console.WriteLine($"{i+1}. {q.QuizTitle} - {q.QuizDescription}");
+    }
+    
+    Console.Write("\nSelect quiz number: ");
+    string input = Console.ReadLine();
+    int quizNum;
+    
+    if(!int.TryParse(input, out quizNum) || quizNum < 1 || quizNum > data.quizzes.Count)
+    {
+        Console.WriteLine("Invalid selection");
+        Console.ReadKey();
+        return;
+    }
+    
+    Quiz selectedQuiz = data.quizzes[quizNum - 1];
+    
+    if(selectedQuiz.QuizQuestions.Count == 0)
+    {
+        Console.WriteLine("This quiz has no questions available yet.");
+        Console.ReadKey();
+        return;
+    }
+    
+    int score = 0;
+    
+    for(int i=0; i < selectedQuiz.QuizQuestions.Count; i++)
+    {
+        Console.Clear();
+        Question q = selectedQuiz.QuizQuestions[i];
+        
+        Console.WriteLine($"Question {i+1}/{selectedQuiz.QuizQuestions.Count}");
+        Console.WriteLine(q.QuestionText);
+        Console.WriteLine();
+        
+        for(int j=0; j<q.QuestionOptions.Count; j++)
+        {
+            Console.WriteLine($"{j+1}. {q.QuestionOptions[j]}");
+        }
+        
+        Console.Write("\nYour answer (1-4): ");
+        string ans = Console.ReadLine();
+        int ansNum;
+        
+        if(int.TryParse(ans, out ansNum) && ansNum >= 1 && ansNum <= q.QuestionOptions.Count)
+        {
+            string selectedAnswer = q.QuestionOptions[ansNum - 1];
+            
+            if(selectedAnswer.Equals(q.QuestionCorrectAnswer, StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("Correct!");
+                score++;
+            }
+            else
+            {
+                Console.WriteLine($"Wrong. Correct answer: {q.QuestionCorrectAnswer}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid input - marked as wrong");
+        }
+        
+        Console.WriteLine("\nPress any key for next question...");
+        Console.ReadKey();
+    }
+    
+    Console.Clear();
+    Console.WriteLine("=== Quiz Complete ===");
+    Console.WriteLine($"Your score: {score}/{selectedQuiz.QuizQuestions.Count}");
+    double percent = ((double)score / selectedQuiz.QuizQuestions.Count) * 100;
+    Console.WriteLine($"Percentage: {percent:F1}%");
+    Console.WriteLine("\nPress any key to return to menu...");
+    Console.ReadKey();
+}
 
     //obtain data from csv file method
     public static List<User> LoadUsers()
