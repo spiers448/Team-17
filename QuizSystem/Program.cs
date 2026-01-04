@@ -69,12 +69,114 @@ public class Program
     }
 
     //normal user menu method
-    public static void ShowUserMenu()
+    //normal user menu method
+public static void ShowUserMenu()
+{
+    DataLoader data = new DataLoader();
+    
+    while(true)
     {
-        //clear console between menus
         Console.Clear();
-        Console.WriteLine("user");
+        Console.WriteLine("=== Student Menu ===");
+        Console.WriteLine("1. Take a Quiz");
+        Console.WriteLine("2. Exit");
+        Console.Write("Select option: ");
+        
+        string choice = Console.ReadLine();
+        
+        if(choice == "1")
+        {
+            TakeQuiz(data);
+        }
+        else if(choice == "2")
+        {
+            break;
+        }
     }
+}
+
+public static void TakeQuiz(DataLoader data)
+{
+    Console.Clear();
+    Console.WriteLine("Available Quizzes:");
+    
+    for(int i=0; i<data.quizzes.Count; i++)
+    {
+        Quiz q = data.quizzes[i];
+        Console.WriteLine($"{i+1}. {q.QuizTitle} - {q.QuizDescription}");
+    }
+    
+    Console.Write("\nSelect quiz number: ");
+    string input = Console.ReadLine();
+    int quizNum;
+    
+    if(!int.TryParse(input, out quizNum) || quizNum < 1 || quizNum > data.quizzes.Count)
+    {
+        Console.WriteLine("Invalid selection");
+        Console.ReadKey();
+        return;
+    }
+    
+    Quiz selectedQuiz = data.quizzes[quizNum - 1];
+    
+    if(selectedQuiz.QuizQuestions.Count == 0)
+    {
+        Console.WriteLine("This quiz has no questions available yet.");
+        Console.ReadKey();
+        return;
+    }
+    
+    int score = 0;
+    
+    for(int i=0; i < selectedQuiz.QuizQuestions.Count; i++)
+    {
+        Console.Clear();
+        Question q = selectedQuiz.QuizQuestions[i];
+        
+        Console.WriteLine($"Question {i+1}/{selectedQuiz.QuizQuestions.Count}");
+        Console.WriteLine(q.QuestionText);
+        Console.WriteLine();
+        
+        for(int j=0; j<q.QuestionOptions.Count; j++)
+        {
+            Console.WriteLine($"{j+1}. {q.QuestionOptions[j]}");
+        }
+        
+        Console.Write("\nYour answer (1-4): ");
+        string ans = Console.ReadLine();
+        int ansNum;
+        
+        if(int.TryParse(ans, out ansNum) && ansNum >= 1 && ansNum <= q.QuestionOptions.Count)
+        {
+            string selectedAnswer = q.QuestionOptions[ansNum - 1];
+            
+            if(selectedAnswer.Equals(q.QuestionCorrectAnswer, StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("Correct!");
+                score++;
+            }
+            else
+            {
+                Console.WriteLine($"Wrong. Correct answer: {q.QuestionCorrectAnswer}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid input - marked as wrong");
+        }
+        
+        Console.WriteLine("\nPress any key for next question...");
+        Console.ReadKey();
+    }
+    
+    Console.Clear();
+    Console.WriteLine("=== Quiz Complete ===");
+    Console.WriteLine($"Your score: {score}/{selectedQuiz.QuizQuestions.Count}");
+    double percent = ((double)score / selectedQuiz.QuizQuestions.Count) * 100;
+    Console.WriteLine($"Percentage: {percent:F1}%");
+    Console.WriteLine("\nPress any key to return to menu...");
+    Console.ReadKey();
+}
 
     //obtain data from csv file method
     public static List<User> LoadUsers()
