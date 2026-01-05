@@ -62,6 +62,7 @@ public class Program
     
     //admin user menu method
   //admin user menu method
+
 public static void ShowAdminMenu()
 {
     DataLoader data = new DataLoader();
@@ -70,14 +71,9 @@ public static void ShowAdminMenu()
     {
         Console.Clear();
         Console.WriteLine("=== Admin Menu ===");
-        Console.WriteLine("1. Add Question");
-        Console.WriteLine("2. Remove Question");
-        Console.WriteLine("3. Update Question");
-        Console.WriteLine("4. View All Questions");
-        Console.WriteLine("5. Add Category");
-        Console.WriteLine("6. Remove Category");
-        Console.WriteLine("7. Save Questions to CSV");
-        Console.WriteLine("8. Exit");
+        Console.WriteLine("1. Choose Category");
+        Console.WriteLine("2. Create Category");
+        Console.WriteLine("3. Exit");
         Console.Write("Select option: ");
         
         string choice = Console.ReadLine();
@@ -85,36 +81,162 @@ public static void ShowAdminMenu()
         switch(choice)
         {
             case "1":
-                AddQuestion(data);
+                ChooseCategory(data);
                 break;
             case "2":
-                RemoveQuestion(data);
-                break;
-            case "3":
-                UpdateQuestion(data);
-                break;
-            case "4":
-                ViewAllQuestions(data);
-                break;
-            case "5":
                 AddCategory(data);
                 break;
-            case "6":
-                RemoveCategory(data);
-                break;
-            case "7":
-                SaveQuestionsToCSV(data);
-                break;
-            case "8":
+            case "3":
                 return;
         }
     }
 }
 
-public static void AddQuestion(DataLoader data)
+public static void ChooseCategory(DataLoader data)
 {
     Console.Clear();
-    Console.WriteLine("=== Add New Question ===");
+    Console.WriteLine("=== Select Category ===");
+    
+    for(int i=0; i<data.categories.Count; i++)
+    {
+        Console.WriteLine($"{i+1}. {data.categories[i].CategoryName}");
+    }
+    
+    Console.Write("\nSelect category number: ");
+    int catNum = int.Parse(Console.ReadLine()) - 1;
+    
+    if(catNum < 0 || catNum >= data.categories.Count)
+    {
+        Console.WriteLine("Invalid selection");
+        Console.ReadKey();
+        return;
+    }
+    
+    Category selectedCat = data.categories[catNum];
+    CategoryMenu(data, selectedCat);
+}
+
+public static void CategoryMenu(DataLoader data, Category category)
+{
+    while(true)
+    {
+        Console.Clear();
+        Console.WriteLine($"=== {category.CategoryName} ===");
+        Console.WriteLine("1. Manage Existing Quizzes");
+        Console.WriteLine("2. Create New Quiz");
+        Console.WriteLine("3. Back");
+        Console.Write("Select option: ");
+        
+        string choice = Console.ReadLine();
+        
+        switch(choice)
+        {
+            case "1":
+                ManageExistingQuizzes(data, category);
+                break;
+            case "2":
+                CreateNewQuiz(data, category);
+                break;
+            case "3":
+                return;
+        }
+    }
+}
+
+public static void ManageExistingQuizzes(DataLoader data, Category category)
+{
+    var categoryQuizzes = data.quizzes.Where(q => q.QuizCategory.CategoryID == category.CategoryID).ToList();
+    
+    if(categoryQuizzes.Count == 0)
+    {
+        Console.WriteLine("No quizzes in this category yet.");
+        Console.ReadKey();
+        return;
+    }
+    
+    Console.Clear();
+    Console.WriteLine($"=== Quizzes in {category.CategoryName} ===");
+    for(int i=0; i<categoryQuizzes.Count; i++)
+    {
+        Console.WriteLine($"{i+1}. {categoryQuizzes[i].QuizTitle}");
+    }
+    
+    Console.Write("\nSelect quiz: ");
+    int quizNum = int.Parse(Console.ReadLine()) - 1;
+    
+    if(quizNum < 0 || quizNum >= categoryQuizzes.Count)
+    {
+        Console.WriteLine("Invalid selection");
+        Console.ReadKey();
+        return;
+    }
+    
+    Quiz selectedQuiz = categoryQuizzes[quizNum];
+    ManageQuiz(data, selectedQuiz);
+}
+
+public static void ManageQuiz(DataLoader data, Quiz quiz)
+{
+    while(true)
+    {
+        Console.Clear();
+        Console.WriteLine($"=== {quiz.QuizTitle} ===");
+        Console.WriteLine("1. Add Question");
+        Console.WriteLine("2. Remove Question");
+        Console.WriteLine("3. View Questions");
+        Console.WriteLine("4. Delete Quiz");
+        Console.WriteLine("5. Back");
+        Console.Write("Select option: ");
+        
+        string choice = Console.ReadLine();
+        
+        switch(choice)
+        {
+            case "1":
+                AddQuestionToQuiz(data, quiz);
+                break;
+            case "2":
+                RemoveQuestionFromQuiz(data, quiz);
+                break;
+            case "3":
+                ViewQuizQuestions(quiz);
+                break;
+            case "4":
+                DeleteQuiz(data, quiz);
+                return;
+            case "5":
+                return;
+        }
+    }
+}
+
+public static void CreateNewQuiz(DataLoader data, Category category)
+{
+    Console.Clear();
+    Console.WriteLine("=== Create New Quiz ===");
+    
+    Console.Write("Quiz ID: ");
+    int id = int.Parse(Console.ReadLine());
+    
+    Console.Write("Quiz title: ");
+    string title = Console.ReadLine();
+    
+    Console.Write("Quiz description: ");
+    string desc = Console.ReadLine();
+    
+    Quiz newQuiz = new Quiz(id, title, desc, DateTime.Now, new List<Question>(), category);
+    data.quizzes.Add(newQuiz);
+    
+    Console.WriteLine("\nQuiz created!");
+    Console.ReadKey();
+    
+    ManageQuiz(data, newQuiz);
+}
+
+public static void AddQuestionToQuiz(DataLoader data, Quiz quiz)
+{
+    Console.Clear();
+    Console.WriteLine("=== Add Question ===");
     
     Console.Write("Question ID: ");
     int id = int.Parse(Console.ReadLine());
@@ -136,93 +258,87 @@ public static void AddQuestion(DataLoader data)
     string difficulty = Console.ReadLine();
     
     Question newQ = new Question(id, text, options, correctAnswer, difficulty);
-    data.questions.Add(newQ);
+    quiz.QuizQuestions.Add(newQ);
     
-    Console.WriteLine("\nQuestion added successfully!");
+    Console.WriteLine("\nQuestion added!");
     Console.ReadKey();
 }
 
-public static void RemoveQuestion(DataLoader data)
+public static void RemoveQuestionFromQuiz(DataLoader data, Quiz quiz)
 {
-    Console.Clear();
-    Console.WriteLine("=== Remove Question ===");
-    
-    ViewAllQuestions(data);
-    
-    Console.Write("\nEnter Question ID to remove: ");
-    int id = int.Parse(Console.ReadLine());
-    
-    Question toRemove = data.questions.FirstOrDefault(q => q.QuestionID == id);
-    
-    if(toRemove != null)
+    if(quiz.QuizQuestions.Count == 0)
     {
-        data.questions.Remove(toRemove);
-        Console.WriteLine("Question removed!");
-    }
-    else
-    {
-        Console.WriteLine("Question not found");
-    }
-    
-    Console.ReadKey();
-}
-
-public static void UpdateQuestion(DataLoader data)
-{
-    Console.Clear();
-    Console.WriteLine("=== Update Question ===");
-    
-    ViewAllQuestions(data);
-    
-    Console.Write("\nEnter Question ID to update: ");
-    int id = int.Parse(Console.ReadLine());
-    
-    Question toUpdate = data.questions.FirstOrDefault(q => q.QuestionID == id);
-    
-    if(toUpdate == null)
-    {
-        Console.WriteLine("Question not found");
+        Console.WriteLine("No questions in this quiz.");
         Console.ReadKey();
         return;
     }
     
-    Console.Write("New question text (leave blank to keep current): ");
-    string newText = Console.ReadLine();
-    if(!string.IsNullOrEmpty(newText))
-        toUpdate.QuestionText = newText;
+    Console.Clear();
+    Console.WriteLine("=== Remove Question ===");
     
-    Console.Write("Update correct answer? (y/n): ");
-    if(Console.ReadLine().ToLower() == "y")
+    for(int i=0; i<quiz.QuizQuestions.Count; i++)
     {
-        Console.Write("New correct answer: ");
-        toUpdate.QuestionCorrectAnswer = Console.ReadLine();
+        Console.WriteLine($"{i+1}. {quiz.QuizQuestions[i].QuestionText}");
     }
     
-    Console.Write("Update difficulty? (y/n): ");
-    if(Console.ReadLine().ToLower() == "y")
+    Console.Write("\nSelect question to remove: ");
+    int qNum = int.Parse(Console.ReadLine()) - 1;
+    
+    if(qNum >= 0 && qNum < quiz.QuizQuestions.Count)
     {
-        Console.Write("New difficulty: ");
-        toUpdate.QuestionDifficultyLevel = Console.ReadLine();
+        quiz.QuizQuestions.RemoveAt(qNum);
+        Console.WriteLine("Question removed!");
+    }
+    else
+    {
+        Console.WriteLine("Invalid selection");
     }
     
-    Console.WriteLine("\nQuestion updated!");
     Console.ReadKey();
 }
 
-public static void ViewAllQuestions(DataLoader data)
+public static void ViewQuizQuestions(Quiz quiz)
 {
-    Console.WriteLine("\n=== All Questions ===");
-    foreach(Question q in data.questions)
+    Console.Clear();
+    Console.WriteLine($"=== {quiz.QuizTitle} Questions ===");
+    
+    if(quiz.QuizQuestions.Count == 0)
     {
-        Console.WriteLine($"ID: {q.QuestionID} | {q.QuestionText} | Difficulty: {q.QuestionDifficultyLevel}");
+        Console.WriteLine("No questions in this quiz.");
     }
-    Console.WriteLine();
+    else
+    {
+        for(int i=0; i<quiz.QuizQuestions.Count; i++)
+        {
+            Question q = quiz.QuizQuestions[i];
+            Console.WriteLine($"\n{i+1}. {q.QuestionText}");
+            for(int j=0; j<q.QuestionOptions.Count; j++)
+            {
+                Console.WriteLine($"   {j+1}) {q.QuestionOptions[j]}");
+            }
+            Console.WriteLine($"   Correct: {q.QuestionCorrectAnswer}");
+            Console.WriteLine($"   Difficulty: {q.QuestionDifficultyLevel}");
+        }
+    }
+    
+    Console.ReadKey();
+}
+
+public static void DeleteQuiz(DataLoader data, Quiz quiz)
+{
+    Console.Write($"Delete '{quiz.QuizTitle}'? (y/n): ");
+    if(Console.ReadLine().ToLower() == "y")
+    {
+        data.quizzes.Remove(quiz);
+        Console.WriteLine("Quiz deleted!");
+        Console.ReadKey();
+    }
 }
 
 public static void AddCategory(DataLoader data)
 {
     Console.Clear();
-    Console.WriteLine("=== Add Category ===");
+    Console.WriteLine("=== Create Category ===");
     
     Console.Write("Category ID: ");
     int id = int.Parse(Console.ReadLine());
@@ -236,66 +352,10 @@ public static void AddCategory(DataLoader data)
     Category newCat = new Category(id, name, desc);
     data.categories.Add(newCat);
     
-    Console.WriteLine("\nCategory added!");
+    Console.WriteLine("\nCategory created!");
     Console.ReadKey();
 }
 
-public static void RemoveCategory(DataLoader data)
-{
-    Console.Clear();
-    Console.WriteLine("=== Remove Category ===");
-    
-    foreach(Category c in data.categories)
-    {
-        Console.WriteLine($"{c.CategoryID}. {c.CategoryName}");
-    }
-    
-    Console.Write("\nEnter Category ID to remove: ");
-    int id = int.Parse(Console.ReadLine());
-    
-    Category toRemove = data.categories.FirstOrDefault(c => c.CategoryID == id);
-    
-    if(toRemove != null)
-    {
-        data.categories.Remove(toRemove);
-        Console.WriteLine("Category removed!");
-    }
-    else
-    {
-        Console.WriteLine("Category not found");
-    }
-    
-    Console.ReadKey();
-}
-
-public static void SaveQuestionsToCSV(DataLoader data)
-{
-    try
-    {
-        List<string> lines = new List<string>();
-        lines.Add("QuestionID,QuestionText,Option1,Option2,Option3,Option4,CorrectAnswer,Difficulty");
-        
-        foreach(Question q in data.questions)
-        {
-            string line = $"{q.QuestionID},\"{q.QuestionText}\",";
-            foreach(string opt in q.QuestionOptions)
-            {
-                line += $"\"{opt}\",";
-            }
-            line += $"\"{q.QuestionCorrectAnswer}\",{q.QuestionDifficultyLevel}";
-            lines.Add(line);
-        }
-        
-        File.WriteAllLines("questions.csv", lines);
-        Console.WriteLine("Questions saved to questions.csv successfully!");
-    }
-    catch(Exception ex)
-    {
-        Console.WriteLine($"Error saving: {ex.Message}");
-    }
-    
-    Console.ReadKey();
-}
 
     //normal user menu method
     //normal user menu method
