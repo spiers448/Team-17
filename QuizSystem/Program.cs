@@ -6,7 +6,6 @@ using System.Text;
 
 public class Program
 {
-
     // Starting point for the application
     public static void Main()
     {
@@ -60,14 +59,15 @@ public class Program
         }
     }
     
-    //admin user menu method
-  //admin user menu method
 
+//admin user menu method
 public static void ShowAdminMenu()
 {
     DataLoader data = new DataLoader();
-    
-    while(true)
+        
+
+
+    while (true)
     {
         Console.Clear();
         Console.WriteLine("=== Admin Menu ===");
@@ -357,8 +357,7 @@ public static void AddCategory(DataLoader data)
 }
 
 
-    //normal user menu method
-    //normal user menu method
+//normal user menu method
 public static void ShowUserMenu()
 {
     DataLoader data = new DataLoader();
@@ -519,7 +518,10 @@ public static void TakeQuiz(DataLoader data)
                 new[] { "UserID", "Username", "Password", "Access", "ContactInfo" },
                 
                 //admin login
-                new[] { "1", "admin", "password1", "Admin", "example123@gmail.com" }
+                new[] { "1", "admin", "password1", "Admin", "example123@gmail.com" },
+            
+                //student login
+                new[] { "1", "student", "password1", "Student", "example123@gmail.com" }
             };
             
             //write list to csv

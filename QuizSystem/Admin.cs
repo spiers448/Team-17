@@ -23,7 +23,7 @@ namespace QuizSystem
         {
             get { return status; }
             set { status = value; }
-        }
+        }   
 
         //constructor
         public Admin(int userID, string userName, string password, string email, UserRole role, string status, DateTime loginDate, bool isLoggedIn) : base(userID, userName, password, role, email, isLoggedIn)

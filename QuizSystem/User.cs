@@ -109,19 +109,6 @@ namespace QuizSystem
             }
         }
 
-        public void ControlDevice(int deviceId, string deviceName, string deviceAction)
-        {
-            if (isLoggedIn)
-            {
-                Console.WriteLine($"Performing action {deviceAction} on {deviceName}");
-                // Add logic to control the smart device here
-            }
-            else
-            {
-                Console.WriteLine("Please log in to control the device");
-            }
-        }
-
     }
 }
 
