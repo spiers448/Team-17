@@ -323,7 +323,7 @@ public static void ShowUserMenu()
         }
     }
 }
-
+    
 public static void TakeQuiz(DataLoader data)
 {
     Console.Clear();
