@@ -23,8 +23,8 @@ namespace QuizSystem
         }
         public Student Student
         {
-            get { return Student; }
-            set { Student = value; }
+            get { return student; }
+            set { student = value; }
         }
         public Quiz QuizTaken
         {
@@ -46,7 +46,7 @@ namespace QuizSystem
         public Result(int attemptID, Student student, Quiz quizTaken, int score, DateTime dateCompleted)
         {
             this.attemptID = attemptID;
-            this.Student = Student;
+            this.student = student;
             this.quizTaken = quizTaken;
             this.score = score;
             this.dateCompleted = dateCompleted;
